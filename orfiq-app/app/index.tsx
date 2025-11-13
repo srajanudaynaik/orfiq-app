@@ -7,7 +7,7 @@ import {
   Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import OrfiqIcon from './components/OrfiqIcon';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -30,11 +30,14 @@ export default function LandingPage() {
     <TouchableWithoutFeedback onPress={onTap}>
       <View style={styles.screen}>
         <Animated.View style={[styles.card, { opacity: fade }]}>
-          <Ionicons name="cube" size={80} color="#fff" />
+          <OrfiqIcon width={120} height={36} />
           <Text style={styles.title}>ORFIG APP</Text>
           <Text style={styles.sub}>Welcome to our application</Text>
         </Animated.View>
 
+        <Animated.Text style={[styles.hint, { opacity: fade }]}>
+          Double tap anywhere to proceed
+        </Animated.Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -47,17 +50,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  card: { alignItems: 'center' },
+  card: { 
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   title: {
     fontSize: 36,
     fontWeight: '700',
     color: '#fff',
-    marginTop: 16,
+    marginTop: 20,
   },
   sub: {
     fontSize: 18,
     color: '#fff',
-    marginTop: 6,
+    marginTop: 8,
   },
   hint: {
     position: 'absolute',

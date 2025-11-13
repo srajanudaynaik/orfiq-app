@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import OrfiqIcon from '../components/OrfiqIcon';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,23 +22,18 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
 
-  // listen to keyboard show/hide
-  React.useEffect(() => {
+  useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
     const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
+    return () => { show.remove(); hide.remove(); };
   }, []);
 
   const handleLogin = () => {
-    if (!email || !password) return;        // basic guard
-    router.push('/home');                   // immediate navigation
+    if (!email || !password) return;
+    router.push('/home');
   };
 
   return (
@@ -51,26 +47,25 @@ export default function LoginPage() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* ---- LOGO ---- slides down when keyboard appears ---- */}
+        {/* ---- ORFIQ ICON + WELCOME TEXT (slides down when keyboard appears) ---- */}
         <Animated.View
           style={[
             styles.header,
-            { transform: [{ translateY: keyboardVisible ? 40 : 0 }] },
+            { transform: [{ translateY: keyboardVisible ? 60 : 0 }] },
           ]}
         >
-          <Ionicons name="cube" size={80} color="#3b82f6" />
-          <Text style={styles.title}>ORFIG APP</Text>
+          <OrfiqIcon width={100} height={30} />
           <Text style={styles.subtitle}>Welcome back</Text>
+          <Text style={styles.sub}>Your learning journey continues here.</Text>
         </Animated.View>
 
-        {/* ---- FORM ---- */}
+        {/* ---- FORM (matches screenshot spacing & text) ---- */}
         <View style={styles.form}>
+          {/* Email */}
           <View style={styles.row}>
-            <Text style={styles.label}>Email</Text>
             <TextInput
-              ref={emailRef}
               style={styles.input}
-              placeholder="Enter your email"
+              placeholder="Enter Your Email"
               placeholderTextColor="#9ca3af"
               value={email}
               onChangeText={setEmail}
@@ -82,13 +77,13 @@ export default function LoginPage() {
             />
           </View>
 
+          {/* Password */}
           <View style={styles.row}>
-            <Text style={styles.label}>Password</Text>
             <View style={styles.passwordWrap}>
               <TextInput
                 ref={passwordRef}
-                style={styles.passwordInput}
-                placeholder="Enter your password"
+                style={styles.input}
+                placeholder="Enter Your Password"
                 placeholderTextColor="#9ca3af"
                 value={password}
                 onChangeText={setPassword}
@@ -102,58 +97,73 @@ export default function LoginPage() {
               >
                 <Ionicons
                   name={showPassword ? 'eye-off' : 'eye'}
-                  size={24}
+                  size={22}
                   color="#6b7280"
                 />
               </TouchableOpacity>
             </View>
           </View>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Sign In</Text>
+          {/* Forgot */}
+          <TouchableOpacity style={styles.forgotBtn}>
+            <Text style={styles.forgotTxt}>Forgot password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.forgot}>
-            <Text style={styles.forgotText}>Forgot your password?</Text>
+          {/* Login */}
+          <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+            <Text style={styles.loginTxt}>Login</Text>
           </TouchableOpacity>
+
+          {/* Terms */}
+          <Text style={styles.terms}>
+            By logging in, you agree to{' '}
+            <Text style={styles.link}>Terms & Conditions</Text>
+          </Text>
         </View>
 
-        <TouchableOpacity style={styles.back} onPress={() => router.back()}>
-          <Text style={styles.backText}>Back to Landing</Text>
+        {/* Back to Landing */}
+        <TouchableOpacity 
+          style={styles.back} 
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backTxt}>Back to Landing</Text>
         </TouchableOpacity>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-/* ---------------- Styles ---------------- */
+/* ---------------- Styles (screenshot match) ---------------- */
 const styles = StyleSheet.create({
   kav: { flex: 1, backgroundColor: '#fff' },
   scroll: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 32,
     paddingBottom: 40,
   },
-  header: { alignItems: 'center', marginBottom: 32 },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginTop: 12,
+  header: { 
+    alignItems: 'center', 
+    marginBottom: 40,
   },
-  subtitle: { fontSize: 16, color: '#6b7280', marginTop: 4 },
+  subtitle: { 
+    fontSize: 24, 
+    fontWeight: '600', 
+    color: '#111', 
+    marginTop: 16,
+    marginBottom: 4,
+  },
+  sub: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
   form: { marginBottom: 24 },
   row: { marginBottom: 16 },
-  label: {
-    color: '#374151',
-    fontSize: 16,
-    marginBottom: 8,
-    fontWeight: '500',
-  },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: '#e5e7eb',
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -161,31 +171,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   passwordWrap: { position: 'relative' },
-  passwordInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    paddingRight: 50,
-    fontSize: 16,
-    backgroundColor: '#fff',
-  },
-  eye: { position: 'absolute', right: 16, top: 14 },
-  loginButton: {
+  eye: { position: 'absolute', right: 16, top: 16 },
+  forgotBtn: { alignSelf: 'flex-end', marginBottom: 12 },
+  forgotTxt: { color: '#3b82f6', fontSize: 14 },
+  loginBtn: {
     backgroundColor: '#3b82f6',
     borderRadius: 8,
     paddingVertical: 16,
-    marginTop: 8,
+    alignItems: 'center',
   },
-  loginButtonText: {
-    color: '#fff',
+  loginTxt: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  terms: {
     textAlign: 'center',
-    fontWeight: '600',
-    fontSize: 18,
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 16,
   },
-  forgot: { marginTop: 16, alignItems: 'center' },
-  forgotText: { color: '#3b82f6', fontSize: 16 },
+  link: { color: '#3b82f6' },
   back: { marginTop: 24, alignItems: 'center' },
-  backText: { color: '#6b7280', fontSize: 16 },
+  backTxt: { color: '#9ca3af', fontSize: 14 },
 });
